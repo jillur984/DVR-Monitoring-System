@@ -1,0 +1,32 @@
+[
+    {
+        "site": "Test DVR",
+        "ip": "10.64.2.253",
+        "username": "admin",
+        "password": "ENC:gAAAAABqZF_GyAOqAevsGUOpsYYxPcDeDRM5kqODxMvafdQzFGf45-MFuypqzfUegg-oIcGTOfmX4x0nLgoIMbE4aZTgt50IxA=="
+    },
+    {
+        "site": "DFM Thai Resident 1",
+        "ip": "10.64.2.218",
+        "username": "sompob",
+        "password": "ENC:gAAAAABqZF_GSQ_mUii6z99gP8jRPQB_l3a1CG3Qo5FQb6NgCjSk7cYQRqniUFt1tCtJmmaLx04ZKxq4v_iIiVLnjWpavyoHPw=="
+    },
+    {
+        "site": "DFM Thai Resident 2",
+        "ip": "10.64.2.219",
+        "username": "sompob",
+        "password": "ENC:gAAAAABqZF_GBkzOtWs2Cc1c-0uKgtsh4_fYJmwaa3W49C3P6xYujG6kbwa0qLksSmkpjHZ_rxWJS5IL7tmwxa0V3heqoXT7yg=="
+    },
+    {
+        "site": "Jillur Test",
+        "ip": "10.64.2.215",
+        "username": "admin",
+        "password": "ENC:gAAAAABqZF_Gb4LfPBe8-d8r-zVoUVTTXvq4m7kzfBq4Bxn8_4_KxprrQSoeR9J4XEjkvNxBIneGFqHY7XX55yqfQ_PoIrOh6Q=="
+    },
+    {
+        "site": "CTGFM-QC",
+        "ip": "10.64.130.225",
+        "username": "admin1",
+        "password": "ENC:gAAAAABqZF_GZZRXGIiAHI5NR9dDOL9F1RZ4MuPTK4TU_YktvRf62B0ugQHTazWDWwJTrAks5D5vaId61b83BoN94fHL79-nqQ=="
+    }
+]
