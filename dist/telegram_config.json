@@ -1,0 +1,9 @@
+{
+    "enabled": true,
+    "bot_token": "8879226642:AAEB9828X3JXN9IsoUAqAa7xHOfo-AfFlfA",
+    "chat_id": "-5359418946",
+    "notify_offline": true,
+    "notify_hdd": true,
+    "notify_summary": true,
+    "summary_interval_minutes": 60
+}

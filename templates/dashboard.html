@@ -632,6 +632,9 @@
                 </div>
             </div>
             <div class="header-actions">
+                <button class="btn btn-secondary" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.1);" onclick="openTelegramModal()">
+                    <i class="fa-paper-plane fa-brands"></i> Telegram Bot
+                </button>
                 <button class="btn btn-secondary" onclick="triggerScan()">
                     <i class="fa-solid fa-arrows-rotate" id="refresh-icon"></i> <span id="refresh-text">Refresh
                         Now</span>
@@ -643,6 +646,7 @@
                     <i class="fa-solid fa-file-import"></i> Bulk Import (100+)
                 </button>
             </div>
+
         </header>
 
         <!-- Stats Overview Cards -->
@@ -818,8 +822,74 @@
         </div>
     </div>
 
+    <!-- Modal: Telegram Bot Integration -->
+    <div class="modal-overlay" id="telegram-modal">
+        <div class="modal" style="max-width: 580px;">
+            <div class="modal-header">
+                <h2><i class="fa-paper-plane fa-brands" style="color: #38bdf8;"></i> Telegram Bot Settings</h2>
+                <i class="fa-solid fa-xmark modal-close" onclick="closeModal('telegram-modal')"></i>
+            </div>
+            <form onsubmit="handleSaveTelegram(event)">
+                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 16px;">
+                    <div>
+                        <strong style="font-size: 0.95rem;">Enable Telegram Bot</strong>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 2px 0 0 0;">Receive instant alerts and status reports</p>
+                    </div>
+                    <input type="checkbox" id="tg-enabled" style="width: 20px; height: 20px; cursor: pointer;">
+                </div>
+                <div class="form-group">
+                    <label>Telegram Bot Token (from @BotFather)</label>
+                    <input type="text" id="tg-bot-token" placeholder="e.g. 123456789:ABCdefGHIjklMNOpqrsTUVwxyZ">
+                </div>
+                <div class="form-group">
+                    <label>Chat ID or Group/Channel ID</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="tg-chat-id" placeholder="e.g. -100123456789 or 987654321">
+                        <button type="button" class="btn btn-secondary" style="white-space: nowrap; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;" onclick="autoDetectChatId()">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Auto Detect
+                        </button>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 16px; background: rgba(0,0,0,0.2); padding: 14px; border-radius: 10px; border: 1px solid var(--border-color);">
+                    <label style="font-weight: 600; font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 10px;">Notification Preferences</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85rem;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="tg-notify-offline" checked> 🔴 Offline/Recovery Alerts
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="tg-notify-hdd" checked> ⚠️ HDD Warning Alerts
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; grid-column: span 2;">
+                            <input type="checkbox" id="tg-notify-summary" checked> 📊 Periodic Health Summary Report
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Summary Interval (Minutes)</label>
+                    <input type="number" id="tg-summary-interval" value="60" min="5" max="1440">
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn btn-secondary" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;" onclick="testTelegram()">
+                            <i class="fa-solid fa-paper-plane"></i> Test Bot
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="sendTelegramSummaryNow()">
+                            <i class="fa-solid fa-chart-pie"></i> Send Summary
+                        </button>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('telegram-modal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Settings</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div class="toast" id="toast">
+
         <i class="fa-solid fa-circle-info" id="toast-icon"></i>
         <span id="toast-msg">Operation completed successfully</span>
     </div>
@@ -1131,10 +1201,133 @@ Mymensingh Branch, 10.64.33.250, admin, test@125`;
             return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
+        // Telegram Bot Integration Functions
+        async function openTelegramModal() {
+            try {
+                const res = await fetch('/api/telegram/config');
+                const data = await res.json();
+                if (data.status === 'success' && data.config) {
+                    const cfg = data.config;
+                    document.getElementById('tg-enabled').checked = !!cfg.enabled;
+                    document.getElementById('tg-bot-token').value = cfg.bot_token || '';
+                    document.getElementById('tg-chat-id').value = cfg.chat_id || '';
+                    document.getElementById('tg-notify-offline').checked = !!cfg.notify_offline;
+                    document.getElementById('tg-notify-hdd').checked = !!cfg.notify_hdd;
+                    document.getElementById('tg-notify-summary').checked = !!cfg.notify_summary;
+                    document.getElementById('tg-summary-interval').value = cfg.summary_interval_minutes || 60;
+                }
+            } catch (err) {
+                console.error("Failed to load Telegram config", err);
+            }
+            openModal('telegram-modal');
+        }
+
+        async function handleSaveTelegram(e) {
+            e.preventDefault();
+            const configData = {
+                enabled: document.getElementById('tg-enabled').checked,
+                bot_token: document.getElementById('tg-bot-token').value.trim(),
+                chat_id: document.getElementById('tg-chat-id').value.trim(),
+                notify_offline: document.getElementById('tg-notify-offline').checked,
+                notify_hdd: document.getElementById('tg-notify-hdd').checked,
+                notify_summary: document.getElementById('tg-notify-summary').checked,
+                summary_interval_minutes: parseInt(document.getElementById('tg-summary-interval').value) || 60
+            };
+
+            try {
+                const res = await fetch('/api/telegram/config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(configData)
+                });
+                const result = await res.json();
+                if (result.status === 'success') {
+                    showToast("Telegram configuration saved!");
+                    closeModal('telegram-modal');
+                } else {
+                    showToast("Error: " + result.message);
+                }
+            } catch (err) {
+                showToast("Failed to save Telegram config");
+            }
+        }
+
+        async function testTelegram() {
+            const bot_token = document.getElementById('tg-bot-token').value.trim();
+            const chat_id = document.getElementById('tg-chat-id').value.trim();
+
+            if (!bot_token || !chat_id) {
+                showToast("Please enter both Bot Token and Chat ID to test");
+                return;
+            }
+
+            showToast("Sending test Telegram message...");
+            try {
+                const res = await fetch('/api/telegram/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ bot_token, chat_id })
+                });
+                const result = await res.json();
+                if (result.status === 'success') {
+                    showToast("✅ " + result.message);
+                } else {
+                    showToast("❌ " + result.message);
+                }
+            } catch (err) {
+                showToast("Failed to connect to Telegram API");
+            }
+        }
+
+        async function sendTelegramSummaryNow() {
+            showToast("Sending Telegram summary report...");
+            try {
+                const res = await fetch('/api/telegram/summary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const result = await res.json();
+                if (result.status === 'success') {
+                    showToast("📊 Summary report sent!");
+                } else {
+                    showToast("❌ " + result.message);
+                }
+            } catch (err) {
+                showToast("Failed to send summary report");
+            }
+        }
+
+        async function autoDetectChatId() {
+            const bot_token = document.getElementById('tg-bot-token').value.trim();
+            if (!bot_token) {
+                showToast("Please enter Bot Token first!");
+                return;
+            }
+            showToast("Detecting Telegram Group Chat ID...");
+            try {
+                const res = await fetch('/api/telegram/auto-detect', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ bot_token })
+                });
+                const result = await res.json();
+                if (result.status === 'success' && result.chat_id) {
+                    document.getElementById('tg-chat-id').value = result.chat_id;
+                    showToast("✅ " + result.message);
+                } else {
+                    showToast("ℹ️ " + result.message);
+                }
+            } catch (err) {
+                showToast("Failed to auto detect Chat ID");
+            }
+        }
+
         // Auto Poll every 5 seconds
         setInterval(fetchDVRStatus, 5000);
         fetchDVRStatus();
     </script>
+
+
 </body>
 
 </html>

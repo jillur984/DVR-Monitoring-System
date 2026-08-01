@@ -5,6 +5,10 @@ import config
 
 class TestConfig(unittest.TestCase):
 
+    def test_config_dir_prefers_project_root(self):
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.assertEqual(os.path.abspath(config.CONFIG_DIR), os.path.abspath(project_root))
+
     def setUp(self):
         # Backup existing dvrs.json if present
         self.backup_file = config.DVRS_FILE + ".bak"
