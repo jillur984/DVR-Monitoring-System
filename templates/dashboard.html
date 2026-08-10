@@ -758,6 +758,12 @@
                     <label>Password</label>
                     <input type="password" id="add-pass" value="test@125" required>
                 </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <button type="button" class="btn btn-secondary" style="border-color: rgba(16, 185, 129, 0.4); color: #10b981;" onclick="verifyDVRCredentials()">
+                        <i class="fa-solid fa-check-circle"></i> Verify Credentials
+                    </button>
+                    <span id="verify-status" style="font-size: 0.85rem; color: var(--text-muted);"></span>
+                </div>
                 <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
                     <button type="button" class="btn btn-secondary" onclick="closeModal('add-modal')">Cancel</button>
                     <button type="submit" class="btn btn-primary">Save DVR</button>
@@ -863,11 +869,18 @@
                         <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; grid-column: span 2;">
                             <input type="checkbox" id="tg-notify-summary" checked> 📊 Periodic Health Summary Report
                         </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; grid-column: span 2;">
+                            <input type="checkbox" id="tg-notify-scheduled" checked> 🕘 Scheduled Morning/Evening Alerts
+                        </label>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Summary Interval (Minutes)</label>
                     <input type="number" id="tg-summary-interval" value="60" min="5" max="1440">
+                </div>
+                <div class="form-group">
+                    <label>Scheduled Alert Times (comma separated, HH:MM)</label>
+                    <input type="text" id="tg-scheduled-alert-times" value="09:30,17:00" placeholder="09:30, 17:00">
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
                     <div style="display: flex; gap: 8px;">
@@ -1066,6 +1079,44 @@
             setTimeout(fetchDVRStatus, 2000);
         }
 
+        // Verify DVR Credentials before adding
+        async function verifyDVRCredentials() {
+            const site = document.getElementById('add-site').value;
+            const ip = document.getElementById('add-ip').value;
+            const username = document.getElementById('add-user').value;
+            const password = document.getElementById('add-pass').value;
+            const statusEl = document.getElementById('verify-status');
+
+            if (!ip) {
+                statusEl.innerHTML = '❌ IP Address required';
+                statusEl.style.color = 'var(--accent-red)';
+                return;
+            }
+
+            statusEl.innerHTML = '⏳ Verifying...';
+            statusEl.style.color = 'var(--text-muted)';
+
+            try {
+                const res = await fetch('/api/dvr/validate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ site, ip, username, password })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    statusEl.innerHTML = data.message;
+                    statusEl.style.color = 'var(--accent-green)';
+                } else {
+                    statusEl.innerHTML = data.message;
+                    statusEl.style.color = 'var(--accent-red)';
+                }
+            } catch (err) {
+                statusEl.innerHTML = '❌ Connection error';
+                statusEl.style.color = 'var(--accent-red)';
+            }
+        }
+
         // Add Single DVR
         async function handleAddDVR(e) {
             e.preventDefault();
@@ -1214,7 +1265,9 @@ Mymensingh Branch, 10.64.33.250, admin, test@125`;
                     document.getElementById('tg-notify-offline').checked = !!cfg.notify_offline;
                     document.getElementById('tg-notify-hdd').checked = !!cfg.notify_hdd;
                     document.getElementById('tg-notify-summary').checked = !!cfg.notify_summary;
+                    document.getElementById('tg-notify-scheduled').checked = cfg.notify_scheduled_alerts !== false;
                     document.getElementById('tg-summary-interval').value = cfg.summary_interval_minutes || 60;
+                    document.getElementById('tg-scheduled-alert-times').value = (cfg.scheduled_alert_times || ['09:30', '17:00']).join(', ');
                 }
             } catch (err) {
                 console.error("Failed to load Telegram config", err);
@@ -1231,7 +1284,9 @@ Mymensingh Branch, 10.64.33.250, admin, test@125`;
                 notify_offline: document.getElementById('tg-notify-offline').checked,
                 notify_hdd: document.getElementById('tg-notify-hdd').checked,
                 notify_summary: document.getElementById('tg-notify-summary').checked,
-                summary_interval_minutes: parseInt(document.getElementById('tg-summary-interval').value) || 60
+                notify_scheduled_alerts: document.getElementById('tg-notify-scheduled').checked,
+                summary_interval_minutes: parseInt(document.getElementById('tg-summary-interval').value) || 60,
+                scheduled_alert_times: document.getElementById('tg-scheduled-alert-times').value.split(',').map(t => t.trim()).filter(Boolean)
             };
 
             try {

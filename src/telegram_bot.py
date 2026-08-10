@@ -139,3 +139,25 @@ def format_summary_report(results, last_updated):
             msg_lines.append(f"🔴 <b>{site}</b> (<code>{ip}</code>) | OFFLINE")
 
     return "\n".join(msg_lines)
+
+
+def format_scheduled_alert_report(results, last_updated):
+    msg_lines = [
+        "🕘 <b>SCHEDULED DVR ALERT REPORT</b>",
+        f"🕒 <i>Updated: {last_updated}</i>",
+        "━━━━━━━━━━━━━━━━━━━━",
+        "<b>Only offline DVRs and HDD issues are included:</b>"
+    ]
+
+    for r in results:
+        site = r.get('site', 'N/A')
+        ip = r.get('ip', 'N/A')
+        if not r.get('online', False):
+            msg_lines.append(f"🔴 <b>{site}</b> (<code>{ip}</code>) | OFFLINE")
+        else:
+            msg_lines.append(f"⚠️ <b>{site}</b> (<code>{ip}</code>) | HDD Issue: {r.get('hdd_status', 'N/A')}")
+
+    if len(results) == 0:
+        msg_lines.append("✅ No offline DVRs or HDD issues detected.")
+
+    return "\n".join(msg_lines)

@@ -1,32 +1,56 @@
 [
     {
-        "site": "Test DVR",
-        "ip": "10.64.2.253",
-        "username": "admin",
-        "password": "ENC:gAAAAABqZF_GyAOqAevsGUOpsYYxPcDeDRM5kqODxMvafdQzFGf45-MFuypqzfUegg-oIcGTOfmX4x0nLgoIMbE4aZTgt50IxA=="
+        "site": "QC CTGFM",
+        "ip": "10.64.130.225",
+        "username": "fto4",
+        "password": "ENC:gAAAAABqeVCWsbhipHjWnuJeLvERjwq-2FJ-9jDcgWIEmXt1M90AoMG2OtjDhiuvfPIhgqYePYS6vGRQWegP1iwGZNkctFDTCg=="
     },
     {
-        "site": "DFM Thai Resident 1",
+        "site": "Thai resident 1",
         "ip": "10.64.2.218",
         "username": "sompob",
-        "password": "ENC:gAAAAABqZF_GSQ_mUii6z99gP8jRPQB_l3a1CG3Qo5FQb6NgCjSk7cYQRqniUFt1tCtJmmaLx04ZKxq4v_iIiVLnjWpavyoHPw=="
+        "password": "ENC:gAAAAABqeVCWSAEvtETQfebsHgtPd0r6s-lxUSKCf0q2T97SRNII_-b_AD5ZJeldKY9ylNtJwj1ZTzy7WMp7lxHmuLOhuRr0nQ=="
     },
     {
-        "site": "DFM Thai Resident 2",
-        "ip": "10.64.2.219",
-        "username": "sompob",
-        "password": "ENC:gAAAAABqZF_GBkzOtWs2Cc1c-0uKgtsh4_fYJmwaa3W49C3P6xYujG6kbwa0qLksSmkpjHZ_rxWJS5IL7tmwxa0V3heqoXT7yg=="
-    },
-    {
-        "site": "Jillur Test",
-        "ip": "10.64.2.215",
+        "site": "Rangpur 7 Farm",
+        "ip": "10.64.114.231",
         "username": "admin",
-        "password": "ENC:gAAAAABqZF_Gb4LfPBe8-d8r-zVoUVTTXvq4m7kzfBq4Bxn8_4_KxprrQSoeR9J4XEjkvNxBIneGFqHY7XX55yqfQ_PoIrOh6Q=="
+        "password": "ENC:gAAAAABqeVCW0zpKF2hpfoBSzmPy3X6LCtdPx33FAib92LIHg6hNb1oqsPgIVG9LwzxEpyid2mldkh6O_gaeUXG9tEn4Yv3NLQ=="
     },
     {
-        "site": "CTGFM-QC",
-        "ip": "10.64.130.225",
+        "site": "Valuka-3 Farm",
+        "ip": "10.64.240.231",
+        "username": "admin",
+        "password": "ENC:gAAAAABqeVCWPPmiDNDgBboCeexSGl5dkKte4Ovq8194vPnbdBrET-C9G4bu5-W1F3ckTNPRBhIqALQpEdwViYI6nnYJVuGqqg=="
+    },
+    {
+        "site": "Rangpur-3 Farm",
+        "ip": "10.64.42.233",
+        "username": "admin",
+        "password": "ENC:gAAAAABqeVCWjIJ33t3LcNDE__KzCCkRYCo38kbR9HPn661pZE-smKFDfl1r_9Sbkm-7iM-LQ8gMfA9vYzZyoifraspjEsM94w=="
+    },
+    {
+        "site": "Valuka Feed Mill",
+        "ip": "10.64.170.25",
         "username": "admin1",
-        "password": "ENC:gAAAAABqZF_GZZRXGIiAHI5NR9dDOL9F1RZ4MuPTK4TU_YktvRf62B0ugQHTazWDWwJTrAks5D5vaId61b83BoN94fHL79-nqQ=="
+        "password": "ENC:gAAAAABqeVCWJPcDPxizXmqteqhagRtTpZlaGlWzF1yWlXOgcyNn0n5Y6776qAOwzaU_VL5yxLI-j-xFPbfqb9e5IelIH3XIdA=="
+    },
+    {
+        "site": "Cumilla Hatchery",
+        "ip": "10.64.98.21",
+        "username": "admin1",
+        "password": "ENC:gAAAAABqeVCWe0YAboL9L62euKSjPEJJ9yAwtB2Ofj5HrQNR2Mys26mwPNYXWM4EnbNVsCrKBmJjpoZlv-kDGsgKAqVtP5WOTw=="
+    },
+    {
+        "site": "Chuadanga DVR",
+        "ip": "10.64.50.26",
+        "username": "admin1",
+        "password": "ENC:gAAAAABqeVCWoP4EONBXJ72nCM2PbUo9NKzlJ5dji5wIcbxs43Qj_E6_aFkeC3SwPgi_S3o5E8PPjC336c6KROcir1BPnnnS2Q=="
+    },
+    {
+        "site": "Khulna Hatchery",
+        "ip": "10.64.122.23",
+        "username": "admin1",
+        "password": "ENC:gAAAAABqeVCW9kzxpXs0hJ8bYdqQPWKRBQSK5XSBlSjF2CgtvF8Ot6S45ijw520vm5Ab4lIxV6mQPJ2m1TIVNYBeI1RfsHtojA=="
     }
 ]

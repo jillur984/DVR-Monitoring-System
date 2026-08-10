@@ -1,26 +1,38 @@
 [
     {
-        "site": "DFM Thai Resident 1",
-        "ip": "10.64.2.218",
-        "username": "sompob",
-        "password": "ENC:gAAAAABqbbf6ox8e8uiqwHoHXK04-W6_4bhCpbGe4438--d_JmCvtj7hqtYexILt-z1936groj5MOHbZao69bSNboY7n8qnTAw=="
-    },
-    {
         "site": "DFM Thai Resident 2",
         "ip": "10.64.2.219",
         "username": "sompob",
-        "password": "ENC:gAAAAABqbbf6iET3LFF4pDJYqhni13ecLCD7WgVAkFPo7NI63eN3ydhf_uIfPc8UHww62V-kR6BGBAgVtF3eQipXX1Zv6CuREw=="
+        "password": "ENC:gAAAAABqcIocVIt2FP2Bu0GjSdqOlKtkDiENdXRJDalyeExH3mO0eWxLBdZBMnaCxWgdDf4tDlcEO66KSoLuuNGY9WyyORQw9A=="
     },
     {
         "site": "CTGFM-QC",
         "ip": "10.64.130.225",
         "username": "admin1",
-        "password": "ENC:gAAAAABqbbf6RnCMtMeDJToj7APB7dh543Ld9R0MY9400ZtLvkYT4yebWXw5bw1FYZ2LVSkhAtrLfgOF9n4YPzrgKfqNU01tgA=="
+        "password": "ENC:gAAAAABqcIocHawYEWRlAkRN5XtvBW8RBLvqylLq9Z0XPH08p5_P55-g_C9DPTx7LucE75tarkP8-F2bH6ztiy5FB-JsLCrblQ=="
     },
     {
         "site": "Hardware Room",
         "ip": "10.64.2.3000",
         "username": "admin",
-        "password": "ENC:gAAAAABqbbf66rK8YeX2351QgvosXLFGOLgGpFcLq4Qu4IG6V9lOj_nHnhDj6sLF7BRv3DUVgdqKBwgqNlKd6ETBmqXnUThk_A=="
+        "password": "ENC:gAAAAABqcIoc9uurQFDbJWulb9M-5BkXahZl1XqDyuVBcNuCNw09W0U9ZZRxyCcq3LLIGj-oMmfKQtkFhWIGF0PKIXfB2261lw=="
+    },
+    {
+        "site": "DVR-Dhaka Branch 10.64.2.240",
+        "ip": "Dhaka Branch 10.64.2.240",
+        "username": "admin",
+        "password": "ENC:gAAAAABqcIocrTuCBeQMxe0TIU_OBpvnEax1Tlpyx6YL39k11z5_Z31z_K1x7EOsskXMPPzljVDKG5JZoUnbVYTrTTVn_WPSkA=="
+    },
+    {
+        "site": "DVR-CTG Brnach 10.64.2.250",
+        "ip": "CTG Brnach 10.64.2.250",
+        "username": "admin",
+        "password": "ENC:gAAAAABqcIoc6BSi2w1XZX6_GiYcTp9ApA7P_J6_xtc2seqOuO5RZPj1y0ZTvI0-bgd8WdkMNv1_qeLvJogYzyd2Y703AMlsPw=="
+    },
+    {
+        "site": "DVR-Feni Branch 10.64.226.250",
+        "ip": "Feni Branch 10.64.226.250",
+        "username": "admin",
+        "password": "ENC:gAAAAABqcIocL5bWHISTgWKnmO9-5EF0c0tHOUcklf19N-nYd4yLTLdDdHJuoUmy7ebAkKizIwB49P3A_rZlExZEwd8oWwBLtg=="
     }
 ]

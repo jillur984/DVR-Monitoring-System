@@ -17,7 +17,7 @@ RESET = "\033[0m"
 
 PREVIOUS_STATES = {}
 LAST_SUMMARY_TIME = 0
-
+SCHEDULED_DIGEST_SENT = {}
 
 
 def log(text):
@@ -300,11 +300,58 @@ def check_all_dvrs_concurrently(dvrs_list=None, max_workers=30):
     return results
 
 
+def validate_dvr_access(dvr):
+    """Validate that a DVR is reachable and credentials are accepted. Returns (can_add, message, is_warning)."""
+    online, latency, info, code = get_dvr_status(dvr)
+    
+    # Best case: online and no auth error
+    if online and not info.get("auth_error", False):
+        return True, f"✅ DVR access verified successfully (latency: {latency}ms)", False
+    
+    # Bad case: auth error means wrong credentials
+    if online and info.get("auth_error", False):
+        return False, "❌ Credentials are incorrect or not authorized (401/403)", False
+    
+    # Warning case: DVR unreachable but might be offline temporarily
+    return True, f"⚠️ DVR currently unreachable ({code}) - but DVR has been added. It will be monitored.", True
+
+
+def build_scheduled_alert_candidates(results):
+    """Return only DVRs that need a scheduled notification."""
+    candidates = []
+    for dvr in results:
+        if not dvr.get("online", False):
+            candidates.append(dvr)
+            continue
+        hdd_count = dvr.get("hdd_count", 0)
+        hdd_status = str(dvr.get("hdd_status", "")).upper()
+        if hdd_count == 0 or "ERROR" in hdd_status:
+            candidates.append(dvr)
+    return candidates
+
+
+def should_send_scheduled_digest(current_time, tg_config, sent_slots):
+    """Return True if the current time matches one of the configured scheduled slots and it has not already been sent."""
+    times = tg_config.get("scheduled_alert_times", [])
+    if not isinstance(times, list) or not times:
+        return False
+
+    current_label = current_time.strftime("%H:%M")
+    if current_label not in times:
+        return False
+
+    if sent_slots.get(current_label) == current_time.strftime("%Y-%m-%d"):
+        return False
+
+    sent_slots[current_label] = current_time.strftime("%Y-%m-%d")
+    return True
+
+
 def process_telegram_alerts(results):
     """
     Checks state changes and dispatches Telegram notifications/alerts.
     """
-    global PREVIOUS_STATES, LAST_SUMMARY_TIME
+    global PREVIOUS_STATES, LAST_SUMMARY_TIME, SCHEDULED_DIGEST_SENT
 
     try:
         tg_config = load_telegram_config()
@@ -319,6 +366,7 @@ def process_telegram_alerts(results):
         notify_offline = tg_config.get("notify_offline", True)
         notify_hdd = tg_config.get("notify_hdd", True)
         notify_summary = tg_config.get("notify_summary", True)
+        notify_scheduled_alerts = tg_config.get("notify_scheduled_alerts", True)
         summary_interval = int(tg_config.get("summary_interval_minutes", 60)) * 60
 
         for dvr in results:
@@ -369,6 +417,13 @@ def process_telegram_alerts(results):
             summary_msg = telegram_bot.format_summary_report(results, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             telegram_bot.send_telegram_message(bot_token, chat_id, summary_msg)
             LAST_SUMMARY_TIME = now
+
+        current_time = datetime.now()
+        if notify_scheduled_alerts and should_send_scheduled_digest(current_time, tg_config, SCHEDULED_DIGEST_SENT):
+            scheduled_candidates = build_scheduled_alert_candidates(results)
+            if scheduled_candidates:
+                schedule_msg = telegram_bot.format_scheduled_alert_report(scheduled_candidates, current_time.strftime("%Y-%m-%d %H:%M:%S"))
+                telegram_bot.send_telegram_message(bot_token, chat_id, schedule_msg)
     except Exception as e:
         print(f"[Telegram Dispatch Error] {e}")
 

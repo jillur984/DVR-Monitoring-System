@@ -11,6 +11,11 @@ import monitor
 import telegram_bot
 
 
+def emit_dashboard_alert(message, level="info"):
+    """Emit a simple dashboard alert message that can be surfaced in the UI if needed."""
+    print(f"[Dashboard Alert][{level}] {message}")
+
+
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATES_DIR = os.path.join(PROJECT_ROOT, "templates")
 
@@ -94,6 +99,30 @@ def trigger_scan():
     return jsonify({"status": "success", "message": "Scan triggered", "is_scanning": is_scanning})
 
 
+@app.route("/api/dvr/validate", methods=["POST"])
+def api_validate_dvr():
+    data = request.json or {}
+    site = data.get("site", "")
+    ip = data.get("ip", "")
+    username = data.get("username", "admin")
+    password = data.get("password", "")
+
+    if not ip or "." not in ip:
+        return jsonify({"status": "error", "message": "Valid IP address is required"}), 400
+
+    valid, message = monitor.validate_dvr_access({
+        "site": site,
+        "ip": ip,
+        "username": username,
+        "password": password,
+    })
+
+    if valid:
+        return jsonify({"status": "success", "message": message})
+    else:
+        return jsonify({"status": "error", "message": message}), 400
+
+
 @app.route("/api/dvr/add", methods=["POST"])
 def api_add_dvr():
     data = request.json or {}
@@ -105,10 +134,25 @@ def api_add_dvr():
     if not ip or "." not in ip:
         return jsonify({"status": "error", "message": "Valid IP address is required"}), 400
 
+    validation_ok, validation_message, is_warning = monitor.validate_dvr_access({
+        "site": site,
+        "ip": ip,
+        "username": username,
+        "password": password,
+    })
+
+    if not validation_ok and not is_warning:
+        emit_dashboard_alert(f"DVR add failed for {ip}: {validation_message}", "error")
+        return jsonify({"status": "error", "message": validation_message}), 400
+
     config.add_dvr(site, ip, username, password)
+    if is_warning:
+        emit_dashboard_alert(f"DVR added with warning for {ip}: {validation_message}", "warning")
+    else:
+        emit_dashboard_alert(f"DVR added successfully: {ip}", "success")
     # Trigger quick background update
     threading.Thread(target=run_scan, daemon=True).start()
-    return jsonify({"status": "success", "message": f"DVR {ip} added successfully"})
+    return jsonify({"status": "success", "message": validation_message})
 
 
 @app.route("/api/dvr/bulk-import", methods=["POST"])

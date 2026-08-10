@@ -254,7 +254,9 @@ DEFAULT_TELEGRAM_CONFIG = {
     "notify_offline": True,
     "notify_hdd": True,
     "notify_summary": True,
-    "summary_interval_minutes": 60
+    "notify_scheduled_alerts": True,
+    "summary_interval_minutes": 60,
+    "scheduled_alert_times": ["09:30", "17:00"]
 }
 
 
